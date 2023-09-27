@@ -1,2 +1,5 @@
 # lcu-driver
-lcu-driver Go ver.
+go ver. lcu-driver
+
+inspired by **[lcu-driver](https://github.com/sousa-andre/lcu-driver)**
+
