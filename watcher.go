@@ -64,7 +64,6 @@ func (c *Watcher) Start() (err error) {
 				binData []byte
 				msgType int
 			)
-			fmt.Println("waiting for message")
 			if msgType, binData, err = c.WSConn.ReadMessage(); err != nil {
 				err = fmt.Errorf("read from websocket err: %v\n", err)
 				return
