@@ -1,18 +1,22 @@
 package example
 
 import (
+	"fmt"
 	"lcu"
 	"testing"
 )
 
-func TestGetUxProcess(t *testing.T) {
-	conn, err := lcuapi.NewConnection()
+func TestGetCurrentSummoner(t *testing.T) {
+	err := lcuapi.Init()
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	if err := conn.Watcher.Start(); err != nil {
+	if data, err := lcuapi.GetCurrentSummoner(); err != nil {
 		t.Error(err)
 		return
+	} else {
+		fmt.Println(data)
 	}
+
 }
