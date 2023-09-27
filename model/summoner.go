@@ -1,6 +1,6 @@
 package model
 
-type SummonerBaseInfo struct {
+type Summoner struct {
 	AccountId                   int          `json:"accountId"`
 	DisplayName                 string       `json:"displayName"`
 	GameName                    string       `json:"gameName"`

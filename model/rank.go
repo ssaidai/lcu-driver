@@ -1,6 +1,6 @@
 package model
 
-type Rank struct {
+type RankedStats struct {
 	QueueMap QueueMap `json:"queueMap"`
 }
 
