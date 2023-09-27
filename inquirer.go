@@ -1,7 +1,9 @@
 package lcuapi
 
 import (
+	"crypto/tls"
 	"encoding/base64"
+	"errors"
 	"github.com/go-resty/resty/v2"
 	"net/http"
 )
@@ -14,18 +16,17 @@ func NewInquirer(token, port string) (ret *Inquirer) {
 	ret = &Inquirer{}
 
 	LCUHeader := http.Header{}
-	LCUHeader.Add("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("riot:"+token)))
-	LCUHeader.Add("Content-Type", "application/json")
-	LCUHeader.Add("Accept", "application/json")
+	LCUHeader.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("riot:"+token)))
+	LCUHeader.Set("Content-Type", "application/json")
+	LCUHeader.Set("Accept", "application/json")
 
 	// init http client
 	ret.Client = resty.New()
 	ret.Client.Header = LCUHeader
 	ret.Client.SetBaseURL("https://127.0.0.1:" + port)
+	ret.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 
-	return &Inquirer{
-		Client: resty.New(),
-	}
+	return
 }
 
 func (c *Inquirer) Put(uri string, body interface{}) (resp *resty.Response, err error) {
@@ -50,4 +51,32 @@ func (c *Inquirer) Post(uri string, body interface{}) (resp *resty.Response, err
 
 func (c *Inquirer) Request(method, uri string, body interface{}) (resp *resty.Response, err error) {
 	return c.R().SetBody(body).Execute(method, uri)
+}
+
+type NilInquirer struct{}
+
+var NeedInitErr = errors.New("need to call Init()")
+
+func (c *NilInquirer) Put(uri string, body interface{}) (resp *resty.Response, err error) {
+	return nil, NeedInitErr
+}
+
+func (c *NilInquirer) Patch(uri string, body interface{}) (resp *resty.Response, err error) {
+	return nil, NeedInitErr
+}
+
+func (c *NilInquirer) Delete(uri string) (resp *resty.Response, err error) {
+	return nil, NeedInitErr
+}
+
+func (c *NilInquirer) Get(uri string) (resp *resty.Response, err error) {
+	return nil, NeedInitErr
+}
+
+func (c *NilInquirer) Post(uri string, body interface{}) (resp *resty.Response, err error) {
+	return nil, NeedInitErr
+}
+
+func (c *NilInquirer) Request(method, uri string, body interface{}) (resp *resty.Response, err error) {
+	return nil, NeedInitErr
 }

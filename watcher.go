@@ -81,3 +81,15 @@ func (c *Watcher) Start() (err error) {
 func (c *Watcher) Close() {
 	close(c.exitChan)
 }
+
+type NilWatcher struct{}
+
+func (w *NilWatcher) SetHandler(_ IHandler) {
+	return
+}
+
+func (w *NilWatcher) Start() (err error) {
+	return NeedInitErr
+}
+
+func (w *NilWatcher) Close() {}
