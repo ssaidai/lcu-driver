@@ -47,3 +47,7 @@ func (c *Inquirer) Get(uri string) (resp *resty.Response, err error) {
 func (c *Inquirer) Post(uri string, body interface{}) (resp *resty.Response, err error) {
 	return c.R().SetBody(body).Post(uri)
 }
+
+func (c *Inquirer) Request(method, uri string, body interface{}) (resp *resty.Response, err error) {
+	return c.R().SetBody(body).Execute(method, uri)
+}
