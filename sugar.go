@@ -3,7 +3,7 @@ package lcuapi
 import (
 	"encoding/json"
 	"fmt"
-	"lcu/model"
+	"github.com/Vikyanite/lcu-driver/model"
 )
 
 var (

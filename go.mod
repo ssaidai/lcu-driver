@@ -1,4 +1,4 @@
-module lcu
+module github.com/Vikyanite/lcu-driver
 
 go 1.19
 

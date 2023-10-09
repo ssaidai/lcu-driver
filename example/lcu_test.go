@@ -2,7 +2,7 @@ package example
 
 import (
 	"fmt"
-	"lcu"
+	"github.com/Vikyanite/lcu-driver"
 	"testing"
 	"time"
 )
