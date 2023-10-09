@@ -69,12 +69,6 @@ func GetUxProcessByPsutil() (*process.Process, error) {
 }
 
 func GetUxProcessCommandlineMapByCmd() (mp map[string]string, err error) {
-	//defer func() func() {
-	//	start := time.Now()
-	//	return func() {
-	//		log.Printf("GetUxProcess cost %v", time.Since(start))
-	//	}
-	//}()()
 	args := []string{
 		"/c",
 		"wmic PROCESS WHERE name='LeagueClientUx.exe' GET commandline",
@@ -95,9 +89,6 @@ func GetUxProcessCommandlineMapByCmd() (mp map[string]string, err error) {
 		}
 		return
 	}
-
-	//pid, err = getPIDByProcessName("LeagueClientUx.exe")
-	//auth = model.Auth{}
 	return
 }
 

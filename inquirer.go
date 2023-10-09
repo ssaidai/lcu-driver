@@ -3,7 +3,6 @@ package lcuapi
 import (
 	"crypto/tls"
 	"encoding/base64"
-	"errors"
 	"github.com/go-resty/resty/v2"
 	"net/http"
 )
@@ -51,32 +50,4 @@ func (c *Inquirer) Post(uri string, body interface{}) (resp *resty.Response, err
 
 func (c *Inquirer) Request(method, uri string, body interface{}) (resp *resty.Response, err error) {
 	return c.R().SetBody(body).Execute(method, uri)
-}
-
-type NilInquirer struct{}
-
-var NeedInitErr = errors.New("need to call Init()")
-
-func (c *NilInquirer) Put(uri string, body interface{}) (resp *resty.Response, err error) {
-	return nil, NeedInitErr
-}
-
-func (c *NilInquirer) Patch(uri string, body interface{}) (resp *resty.Response, err error) {
-	return nil, NeedInitErr
-}
-
-func (c *NilInquirer) Delete(uri string) (resp *resty.Response, err error) {
-	return nil, NeedInitErr
-}
-
-func (c *NilInquirer) Get(uri string) (resp *resty.Response, err error) {
-	return nil, NeedInitErr
-}
-
-func (c *NilInquirer) Post(uri string, body interface{}) (resp *resty.Response, err error) {
-	return nil, NeedInitErr
-}
-
-func (c *NilInquirer) Request(method, uri string, body interface{}) (resp *resty.Response, err error) {
-	return nil, NeedInitErr
 }

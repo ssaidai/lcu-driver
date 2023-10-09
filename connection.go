@@ -1,55 +1,42 @@
 package lcuapi
 
-import "github.com/go-resty/resty/v2"
+import "sync/atomic"
 
-type IInquirer interface {
-	Put(uri string, body interface{}) (resp *resty.Response, err error)
-	Patch(uri string, body interface{}) (resp *resty.Response, err error)
-	Delete(uri string) (resp *resty.Response, err error)
-	Get(uri string) (resp *resty.Response, err error)
-	Post(uri string, body interface{}) (resp *resty.Response, err error)
-	Request(method, uri string, body interface{}) (resp *resty.Response, err error)
+type Driver struct {
+	authKey   string
+	port      string
+	isRunning uint32
+	*Inquirer
+	*Watcher
 }
 
-type IWatcher interface {
-	SetHandler(handler IHandler)
-	Start() error
-	Close()
+func NewDriver() (c *Driver) {
+	c = &Driver{}
+	return
 }
 
-type Connection struct {
-	authKey string
-	port    string
-	IInquirer
-	IWatcher
-}
-
-func NewConnection() (c *Connection, err error) {
+func (c *Driver) Run() (err error) {
 	// get lcu process commandline map
 	mp, err := GetUxProcessCommandlineMapByCmd()
 	if err != nil {
 		return
 	}
-	c = &Connection{
-		authKey:   mp["remoting-auth-token"],
-		port:      mp["app-port"],
-		IInquirer: &NilInquirer{},
-		IWatcher:  &NilWatcher{},
-	}
 
+	c.authKey = mp["remoting-auth-token"]
+	c.port = mp["app-port"]
+
+	c.Inquirer = NewInquirer(c.authKey, c.port)
+
+	c.Watcher, err = NewWatcher(c.authKey, c.port)
+	if err != nil {
+		return
+	}
+	atomic.StoreUint32(&c.isRunning, 1)
+	err = c.Watcher.start()
+	atomic.StoreUint32(&c.isRunning, 0)
 	return
 }
 
-func (c *Connection) Init() (err error) {
-	c.IInquirer = NewInquirer(c.authKey, c.port)
-	if err != nil {
-		return
-	}
-	c.IWatcher, err = NewWatcher(c.authKey, c.port)
-	if err != nil {
-		return
-	}
-
-	// TODO use goroutine to start watcher
-	return
+func (c *Driver) IsRunning() bool {
+	return atomic.LoadUint32(&c.isRunning) == 1
 }

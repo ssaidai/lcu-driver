@@ -10,9 +10,8 @@ import (
 
 // Watcher is used to watch the LOL Client events
 type Watcher struct {
-	WSConn   *websocket.Conn
-	handler  IHandler
-	exitChan chan struct{}
+	WSConn  *websocket.Conn
+	handler IHandler
 }
 
 type IHandler interface {
@@ -21,8 +20,7 @@ type IHandler interface {
 
 func NewWatcher(token, port string) (w *Watcher, err error) {
 	w = &Watcher{
-		exitChan: make(chan struct{}),
-		handler:  &PrintHandler{},
+		handler: &PrintHandler{},
 	}
 
 	LCUHeader := http.Header{}
@@ -46,50 +44,28 @@ func (c *Watcher) SetHandler(handler IHandler) {
 	c.handler = handler
 }
 
-func (c *Watcher) Start() (err error) {
-	defer c.WSConn.Close()
-
+func (c *Watcher) start() (err error) {
 	if err = c.WSConn.WriteMessage(websocket.TextMessage, []byte("[5, \"OnJsonApiEvent\"]")); err != nil {
 		err = fmt.Errorf("write to websocket err: %v\n", err)
 		return
 	}
-
+	defer c.WSConn.Close()
 	for {
-		select {
-		case <-c.exitChan:
-			err = fmt.Errorf("watcher exit locally")
+		var (
+			binData []byte
+			msgType int
+		)
+		if msgType, binData, err = c.WSConn.ReadMessage(); err != nil {
+			err = fmt.Errorf("read from websocket err: %v\n", err)
 			return
-		default:
-			var (
-				binData []byte
-				msgType int
-			)
-			if msgType, binData, err = c.WSConn.ReadMessage(); err != nil {
-				err = fmt.Errorf("read from websocket err: %v\n", err)
-				return
-			} else if msgType == websocket.TextMessage {
-				if len(binData) < OnJsonApiEventPrefixLen+1 {
-					continue
-				}
-				err = c.handler.Handle(binData)
+		} else if msgType == websocket.TextMessage {
+			if len(binData) < OnJsonApiEventPrefixLen+1 {
+				continue
+			}
+			err = c.handler.Handle(binData)
+			if err != nil {
 				fmt.Println(err)
 			}
 		}
 	}
 }
-
-func (c *Watcher) Close() {
-	close(c.exitChan)
-}
-
-type NilWatcher struct{}
-
-func (w *NilWatcher) SetHandler(_ IHandler) {
-	return
-}
-
-func (w *NilWatcher) Start() (err error) {
-	return NeedInitErr
-}
-
-func (w *NilWatcher) Close() {}

@@ -4,19 +4,19 @@ import (
 	"fmt"
 	"lcu"
 	"testing"
+	"time"
 )
 
-func TestGetCurrentSummoner(t *testing.T) {
-	err := lcuapi.Init()
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	if data, err := lcuapi.GetCurrentSummoner(); err != nil {
-		t.Error(err)
-		return
-	} else {
-		fmt.Println(data)
-	}
+func TestSugar(t *testing.T) {
+	go func() {
+		if err := lcuapi.Run(); err != nil {
+			fmt.Printf("lcuapi.Run() err: %+v\n", err)
+			return
+		}
+	}()
 
+	time.Sleep(time.Second * 1)
+
+	data, err := lcuapi.GetCurrentSummoner()
+	fmt.Printf("data: %v, err: %v\n", data, err)
 }
