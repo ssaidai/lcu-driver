@@ -15,6 +15,10 @@ func Run(startCbs ...func() error) (err error) {
 	return
 }
 
+func IsRunning() bool {
+	return sugarConn.IsRunning()
+}
+
 func GET(uri string) (resp []byte, err error) {
 	if !sugarConn.IsRunning() {
 		err = fmt.Errorf("lcu-driver not running")
