@@ -1,43 +1,8 @@
 package model
 
-type Assets struct {
-	Champions map[int]Champion  `json:"champions"`
-	Queues    map[int]Queue     `json:"queues"`
-	Perks     map[int]Perk      `json:"perks"`
-	Items     map[int]Item      `json:"items"`
-	Spells    map[int]Spell     `json:"spells"`
-	PerkStyle map[int]PerkStyle `json:"perkStyles"`
-	Tier      map[string]Tier   `json:"tier"`
-}
-
-func (a *Assets) GetChampionById(id int) Champion {
-	return a.Champions[id]
-}
-
-func (a *Assets) GetQueueById(id int) Queue {
-	return a.Queues[id]
-}
-
-func (a *Assets) GetPerkById(id int) Perk {
-	return a.Perks[id]
-}
-
-func (a *Assets) GetItemById(id int) Item {
-	return a.Items[id]
-}
-
-func (a *Assets) GetSpellById(id int) Spell {
-	return a.Spells[id]
-}
-
-func (a *Assets) GetPerkStyleById(id int) PerkStyle {
-	return a.PerkStyle[id]
-}
-
-type PerkStyle struct {
-	Id          int    `json:"id"`
-	Description string `json:"description"`
-	IconPath    string `json:"iconPath"`
+type PerkStyles struct {
+	SchemaVersion int         `json:"schemaVersion"`
+	Styles        []PerkStyle `json:"styles"`
 }
 
 type Perk struct {
@@ -104,4 +69,37 @@ type Tier struct {
 	IconPath string `json:"iconPath"`
 	Name     string `json:"name"`
 	Division string `json:"division"`
+}
+
+type PerkStyle struct {
+	Id                         int                          `json:"id"`
+	Name                       string                       `json:"name"`
+	Tooltip                    string                       `json:"tooltip"`
+	IconPath                   string                       `json:"iconPath"`
+	AssetMap                   map[string]string            `json:"assetMap"`
+	IsAdvanced                 bool                         `json:"isAdvanced"`
+	AllowedSubStyles           []int                        `json:"allowedSubStyles"`
+	SubStyleBonus              []SubStyleBonus              `json:"subStyleBonus"`
+	Slots                      []Slots                      `json:"slots"`
+	DefaultPageName            string                       `json:"defaultPageName"`
+	DefaultSubStyle            int                          `json:"defaultSubStyle"`
+	DefaultPerks               []int                        `json:"defaultPerks"`
+	DefaultPerksWhenSplashed   []int                        `json:"defaultPerksWhenSplashed"`
+	DefaultStatModsPerSubStyle []DefaultStatModsPerSubStyle `json:"defaultStatModsPerSubStyle"`
+}
+
+type SubStyleBonus struct {
+	StyleId int `json:"styleId"`
+	PerkId  int `json:"perkId"`
+}
+
+type Slots struct {
+	Type      string `json:"type"`
+	SlotLabel string `json:"slotLabel"`
+	Perks     []int  `json:"perks"`
+}
+
+type DefaultStatModsPerSubStyle struct {
+	Id    string `json:"id"`
+	Perks []int  `json:"perks"`
 }
