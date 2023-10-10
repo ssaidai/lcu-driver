@@ -10,8 +10,8 @@ var (
 	sugarConn = NewDriver()
 )
 
-func Run() (err error) {
-	err = sugarConn.Run()
+func Run(startCbs ...func() error) (err error) {
+	err = sugarConn.Run(startCbs...)
 	return
 }
 
