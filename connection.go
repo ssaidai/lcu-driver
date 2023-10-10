@@ -15,7 +15,7 @@ func NewDriver() (c *Driver) {
 	return
 }
 
-func (c *Driver) Run() (err error) {
+func (c *Driver) Run(startFunc ...func() error) (err error) {
 	// get lcu process commandline map
 	mp, err := GetUxProcessCommandlineMapByCmd()
 	if err != nil {
@@ -31,9 +31,19 @@ func (c *Driver) Run() (err error) {
 	if err != nil {
 		return
 	}
+
 	atomic.StoreUint32(&c.isRunning, 1)
-	err = c.Watcher.start()
-	atomic.StoreUint32(&c.isRunning, 0)
+	defer atomic.StoreUint32(&c.isRunning, 0)
+
+	for i := range startFunc {
+		err = startFunc[i]()
+		if err != nil {
+			return
+		}
+	}
+
+	err = c.Watcher.watch()
+
 	return
 }
 
