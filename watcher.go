@@ -37,6 +37,10 @@ func NewWatcher(token, port string) (w *Watcher, err error) {
 	if err != nil {
 		return
 	}
+	if err = w.WSConn.WriteMessage(websocket.TextMessage, []byte("[5, \"OnJsonApiEvent\"]")); err != nil {
+		err = fmt.Errorf("write init msg to websocket err: %v\n", err)
+		return
+	}
 	return
 }
 
@@ -44,11 +48,7 @@ func (c *Watcher) SetHandler(handler IHandler) {
 	c.handler = handler
 }
 
-func (c *Watcher) start() (err error) {
-	if err = c.WSConn.WriteMessage(websocket.TextMessage, []byte("[5, \"OnJsonApiEvent\"]")); err != nil {
-		err = fmt.Errorf("write to websocket err: %v\n", err)
-		return
-	}
+func (c *Watcher) watch() (err error) {
 	defer c.WSConn.Close()
 	for {
 		var (
