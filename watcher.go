@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"net/http"
+	"time"
 )
 
 // Watcher is used to watch the LOL Client events
@@ -49,22 +50,36 @@ func (c *Watcher) SetHandler(handler IHandler) {
 }
 
 func (c *Watcher) watch() (err error) {
-	defer c.WSConn.Close()
+	ticker := time.NewTicker(time.Millisecond * 500)
+	defer func() {
+		ticker.Stop()
+		c.WSConn.Close()
+	}()
 	for {
 		var (
 			binData []byte
 			msgType int
 		)
-		if msgType, binData, err = c.WSConn.ReadMessage(); err != nil {
-			err = fmt.Errorf("read from websocket err: %v\n", err)
-			return
-		} else if msgType == websocket.TextMessage {
-			if len(binData) < OnJsonApiEventPrefixLen+1 {
-				continue
-			}
-			err = c.handler.Handle(binData)
-			if err != nil {
-				fmt.Println(err)
+		for {
+			select {
+			case <-ticker.C:
+				err = c.WSConn.WriteMessage(websocket.PingMessage, nil)
+				if err != nil {
+					return
+				}
+			default:
+				if msgType, binData, err = c.WSConn.ReadMessage(); err != nil {
+					err = fmt.Errorf("read from websocket err: %v\n", err)
+					return
+				} else if msgType == websocket.TextMessage {
+					if len(binData) < OnJsonApiEventPrefixLen+1 {
+						continue
+					}
+					err = c.handler.Handle(binData)
+					if err != nil {
+						fmt.Println(err)
+					}
+				}
 			}
 		}
 	}
