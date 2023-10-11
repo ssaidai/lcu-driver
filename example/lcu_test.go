@@ -4,19 +4,19 @@ import (
 	"fmt"
 	"github.com/Vikyanite/lcu-driver"
 	"testing"
-	"time"
 )
 
 func TestSugar(t *testing.T) {
-	go func() {
-		if err := lcuapi.Run(); err != nil {
-			fmt.Printf("lcuapi.Run() err: %+v\n", err)
+	if keepalive, err := lcuapi.Start(); err != nil {
+		fmt.Printf("lcuapi.Start() err: %+v\n", err)
+		return
+	} else {
+		go func() {
+			err := <-keepalive
+			fmt.Printf("lcuapi.Start() keepalive err: %+v\n", err)
 			return
-		}
-	}()
-
-	time.Sleep(time.Second * 1)
-
+		}()
+	}
 	data, err := lcuapi.GetCurrentSummoner()
 	fmt.Printf("data: %v, err: %v\n", data, err)
 }

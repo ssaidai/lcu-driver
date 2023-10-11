@@ -10,13 +10,8 @@ var (
 	sugarConn = NewDriver()
 )
 
-func Run(startCbs ...func() error) (err error) {
-	err = sugarConn.Run(startCbs...)
-	return
-}
-
-func IsRunning() bool {
-	return sugarConn.IsRunning()
+func Start(startCbs ...func() error) (chan error, error) {
+	return sugarConn.Start(startCbs...)
 }
 
 func GET(uri string) (resp []byte, err error) {

@@ -15,7 +15,7 @@ func NewDriver() (c *Driver) {
 	return
 }
 
-func (c *Driver) Run(startFunc ...func() error) (err error) {
+func (c *Driver) Start(startFunc ...func() error) (keepalive chan error, err error) {
 	// get lcu process commandline map
 	mp, err := GetUxProcessCommandlineMapByCmd()
 	if err != nil {
@@ -42,7 +42,8 @@ func (c *Driver) Run(startFunc ...func() error) (err error) {
 		}
 	}
 
-	err = c.Watcher.watch()
+	keepalive = make(chan error)
+	keepalive <- c.Watcher.watch()
 
 	return
 }
