@@ -11,6 +11,7 @@ var (
 )
 
 func Start(startCbs ...func() error) (chan error, error) {
+	startCbs = append(startCbs, AssetsManagerInstance().Init)
 	return sugarConn.Start(startCbs...)
 }
 
@@ -46,6 +47,10 @@ func GetCurrentSummoner() (data model.Summoner, err error) {
 		return
 	}
 	err = json.Unmarshal(binData, &data)
+	if err != nil {
+		return
+	}
+	err = AssetsManagerInstance().Fill(&data)
 	return
 }
 
@@ -55,6 +60,10 @@ func GetSummonerByName(name string) (data model.Summoner, err error) {
 		return
 	}
 	err = json.Unmarshal(binData, &data)
+	if err != nil {
+		return
+	}
+	err = AssetsManagerInstance().Fill(&data)
 	return
 }
 
@@ -65,6 +74,10 @@ func GetMatchHistoryByPuuid(puuid string, begI, endI int) (data model.MatchHisto
 		return
 	}
 	err = json.Unmarshal(binData, &data)
+	if err != nil {
+		return
+	}
+	err = AssetsManagerInstance().Fill(&data)
 	return
 }
 
@@ -75,6 +88,10 @@ func GetMatchDetailsByGameId(gameId int) (data model.MatchData, err error) {
 		return
 	}
 	err = json.Unmarshal(binData, &data)
+	if err != nil {
+		return
+	}
+	err = AssetsManagerInstance().Fill(&data)
 	return
 }
 
@@ -85,5 +102,37 @@ func GetRankedStatsByPuuid(puuid string) (data model.RankedStats, err error) {
 		return
 	}
 	err = json.Unmarshal(binData, &data)
+	if err != nil {
+		return
+	}
+	err = AssetsManagerInstance().Fill(&data)
 	return
+}
+
+func GetChampionById(id int) model.Champion {
+	return AssetsManagerInstance().GetChampionById(id)
+}
+
+func GetQueueById(id int) model.Queue {
+	return AssetsManagerInstance().GetQueueById(id)
+}
+
+func GetPerkById(id int) model.Perk {
+	return AssetsManagerInstance().GetPerkById(id)
+}
+
+func GetItemById(id int) model.Item {
+	return AssetsManagerInstance().GetItemById(id)
+}
+
+func GetSpellById(id int) model.Spell {
+	return AssetsManagerInstance().GetSpellById(id)
+}
+
+func GetPerkStyleById(id int) model.PerkStyle {
+	return AssetsManagerInstance().GetPerkStyleById(id)
+}
+
+func GetProfileIconById(id int) model.ProfileIcon {
+	return AssetsManagerInstance().GetProfileIconById(id)
 }

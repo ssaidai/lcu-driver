@@ -8,6 +8,7 @@ type Summoner struct {
 	NameChangeFlag              bool         `json:"nameChangeFlag"`
 	PercentCompleteForNextLevel int          `json:"percentCompleteForNextLevel"`
 	Privacy                     string       `json:"privacy"`
+	ProfileIconOb               ProfileIcon  `json:"profileIconOb"`
 	ProfileIconId               int          `json:"profileIconId"`
 	Puuid                       string       `json:"puuid"`
 	RerollPoints                RerollPoints `json:"rerollPoints"`

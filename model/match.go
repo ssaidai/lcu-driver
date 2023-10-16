@@ -203,15 +203,16 @@ type ParticipantIdentity struct {
 }
 
 type Player struct {
-	AccountId         int    `json:"accountId"`
-	CurrentAccountId  int    `json:"currentAccountId"`
-	CurrentPlatformId string `json:"currentPlatformId"`
-	MatchHistoryUri   string `json:"matchHistoryUri"`
-	PlatformId        string `json:"platformId"`
-	ProfileIcon       int    `json:"profileIcon"`
-	Puuid             string `json:"puuid"`
-	SummonerId        int    `json:"summonerId"`
-	SummonerName      string `json:"summonerName"`
+	AccountId         int         `json:"accountId"`
+	CurrentAccountId  int         `json:"currentAccountId"`
+	CurrentPlatformId string      `json:"currentPlatformId"`
+	MatchHistoryUri   string      `json:"matchHistoryUri"`
+	PlatformId        string      `json:"platformId"`
+	ProfileIcon       int         `json:"profileIcon"`
+	ProfileIconOb     ProfileIcon `json:"profileIconOb"`
+	Puuid             string      `json:"puuid"`
+	SummonerId        int         `json:"summonerId"`
+	SummonerName      string      `json:"summonerName"`
 }
 
 type Team struct {
