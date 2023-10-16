@@ -16,7 +16,7 @@ type AssetsManager struct {
 	spells       map[int]model.Spell
 	perkStyles   map[int]model.PerkStyle
 	tiers        map[string]model.Tier
-	profileIcons []model.ProfileIcon
+	profileIcons map[int]model.ProfileIcon
 }
 
 var assetsManagerInstance *AssetsManager
@@ -78,7 +78,7 @@ func AssetsManagerInstance() *AssetsManager {
 				Name:     "最强王者",
 			},
 		},
-		profileIcons: []model.ProfileIcon{},
+		profileIcons: map[int]model.ProfileIcon{},
 	}
 	return assetsManagerInstance
 }
@@ -238,7 +238,7 @@ func (a *AssetsManager) getProfileIcons() (err error) {
 		return err
 	}
 	for i := range array {
-		a.profileIcons = append(a.profileIcons, array[i])
+		a.profileIcons[array[i].Id] = array[i]
 	}
 	return
 }
