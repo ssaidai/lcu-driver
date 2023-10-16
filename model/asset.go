@@ -1,5 +1,10 @@
 package model
 
+type ProfileIcon struct {
+	Id       int    `json:"id"`
+	IconPath string `json:"iconPath"`
+}
+
 type PerkStyles struct {
 	SchemaVersion int         `json:"schemaVersion"`
 	Styles        []PerkStyle `json:"styles"`
