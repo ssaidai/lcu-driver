@@ -33,8 +33,6 @@ func (c *Driver) Start(startFunc ...func() error) (keepalive chan error, err err
 	}
 
 	atomic.StoreUint32(&c.isRunning, 1)
-	defer atomic.StoreUint32(&c.isRunning, 0)
-
 	for i := range startFunc {
 		err = startFunc[i]()
 		if err != nil {
@@ -43,8 +41,10 @@ func (c *Driver) Start(startFunc ...func() error) (keepalive chan error, err err
 	}
 
 	keepalive = make(chan error)
-	keepalive <- c.Watcher.watch()
-
+	go func() {
+		defer atomic.StoreUint32(&c.isRunning, 0)
+		keepalive <- c.Watcher.watch()
+	}()
 	return
 }
 
