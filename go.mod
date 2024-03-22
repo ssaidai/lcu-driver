@@ -17,7 +17,6 @@ require (
 	golang.org/x/net v0.0.0-20211029224645-99673261e6eb // indirect
 )
 
-require (
-	github.com/gorilla/websocket v1.5.0 // indirect
-	github.com/panjf2000/ants/v2 v2.8.2 // indirect
-)
+require github.com/gorilla/websocket v1.5.0
+
+require github.com/panjf2000/ants/v2 v2.8.2 // indirect

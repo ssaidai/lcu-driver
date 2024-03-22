@@ -24,6 +24,20 @@ type MatchHistory struct {
 	PlatformId string `json:"platformId"`
 }
 
+type Matchmaking struct {
+	Errors          []string        `json:"errors"`
+	LowPriorityData LowPriorityData `json:"lowPriorityData"`
+	SearchState     string          `json:"searchState"`
+}
+
+type LowPriorityData struct {
+	BustedLeaverAccessToken string  `json:"bustedLeaverAccessToken"`
+	PenalizedSummonerIds    []int   `json:"penalizedSummonerIds"`
+	PenaltyTime             float64 `json:"penaltyTime"`
+	PenaltyTimeRemaining    float64 `json:"penaltyTimeRemaining"`
+	Reason                  string  `json:"reason"`
+}
+
 // ===================== embed struct =====================
 
 type Game struct {

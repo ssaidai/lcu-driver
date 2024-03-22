@@ -68,6 +68,62 @@ func GetUxProcessByPsutil() (*process.Process, error) {
 	return nil, nil
 }
 
+func GetRiotClientProcessByPsutil() (*process.Process, error) {
+	//defer func() func() {
+	//	start := time.Now()
+	//	return func() {
+	//		log.Printf("GetUxProcess cost %v", time.Since(start))
+	//	}
+	//}()()
+
+	var (
+		processChan = make(chan *process.Process)
+		//tickChan    = time.Tick(500 * time.Millisecond)
+		tickTimes = 0
+	)
+	defer close(processChan)
+
+	//for {
+	//	select {
+	//	case <-tickChan:
+	//if tickTimes >= MaxTickTimes {
+	//	return nil, errors.New("LeagueClientUx.exe not found")
+	//}
+	processes, err := process.Processes()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, p := range processes {
+		//TODO wait util gopsutil implement Status()
+		//
+		//status, err := p.Status()
+		//if err != nil {
+		//	log.Printf("Error getting process status: %v", err)
+		//	continue
+		//}
+		//if status == "Z" {
+		//	continue
+		//}
+
+		name, err := p.Name()
+		if err != nil {
+			log.Printf("Error getting process name: %v", err)
+			continue
+		}
+
+		if name == "RiotClientServices.exe" || name == "RiotClientServices" {
+			return p, nil
+		}
+	}
+	tickTimes++
+	//		continue
+	//	}
+	//}
+	return nil, nil
+
+}
+
 func GetUxProcessCommandlineMapByCmd() (mp map[string]string, err error) {
 	args := []string{
 		"/c",
@@ -81,7 +137,7 @@ func GetUxProcessCommandlineMapByCmd() (mp map[string]string, err error) {
 	// 通过判断是否有CommandLine来判断是否启动客户端
 	var FoundClientExe = strings.HasPrefix(string(res), "CommandLine")
 
-	mp = flagsToMap(res)
+	mp = flagsToMap(string(res))
 	if len(mp) == 0 {
 		err = errors.New("need admin")
 		if !FoundClientExe {
@@ -114,10 +170,10 @@ func getPIDByProcessName(processName string) (int, error) {
 	return 0, fmt.Errorf("process not found: %s", processName)
 }
 
-func flagsToMap(res []byte) map[string]string {
+func flagsToMap(res string) map[string]string {
 	// 使用正则表达式来提取键值对
-	re := regexp.MustCompile(`"--([^=]+)=([^ ]+)"`)
-	matches := re.FindAllStringSubmatch(string(res), -1)
+	re := regexp.MustCompile(`--([^= ]+)=([^ ]+)`)
+	matches := re.FindAllStringSubmatch(res, -1)
 
 	// 创建一个map来存储键值对
 	configMap := make(map[string]string)

@@ -10,9 +10,9 @@ var (
 	sugarConn = NewDriver()
 )
 
-func Start(startCbs ...func() error) (chan error, error) {
+func Start(cmd bool, startCbs ...func() error) (chan error, error) {
 	startCbs = append(startCbs, AssetsManagerInstance().Init)
-	return sugarConn.Start(startCbs...)
+	return sugarConn.Start(cmd, startCbs...)
 }
 
 func GET(uri string) (resp []byte, err error) {
@@ -34,6 +34,19 @@ func POST(uri string, body interface{}) (resp []byte, err error) {
 		return
 	}
 	r, err := sugarConn.Post(uri, body)
+	if err != nil {
+		return
+	}
+	resp = r.Body()
+	return
+}
+
+func PUT(uri string, body interface{}) (resp []byte, err error) {
+	if !sugarConn.IsRunning() {
+		err = fmt.Errorf("lcu-driver not running")
+		return
+	}
+	r, err := sugarConn.Put(uri, body)
 	if err != nil {
 		return
 	}
